@@ -22,7 +22,7 @@ public class Calculator3 {
         //(1 + r)^(-n) ALSO (1 + monthlyInterestRate) ^ (-totalPayments)
 
         double presentValue = monthlyPayout * ((1 - powerResult) / monthlyInterestRate);
-        //monthlyPayout × ((1 - powerResult) / r)
+        //monthlyPayout * ((1 - powerResult) / r)
 
         System.out.printf("Present Value: $%.2f%n", presentValue);
 

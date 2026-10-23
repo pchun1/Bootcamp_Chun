@@ -30,7 +30,7 @@ public class Calculator1 {
         double totalInterest = totalPaid - principal;
         // (M * n) - P
 
-        System.out.printf("Monthly Payments: %.2f%n", monthlyPayment);
+        System.out.printf("Monthly Payments: $%.2f%n", monthlyPayment);
         System.out.printf("Total Interest: $%.2f%n", totalInterest);
 
         scanner.close();
