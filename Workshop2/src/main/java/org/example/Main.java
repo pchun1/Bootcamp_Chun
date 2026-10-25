@@ -76,7 +76,7 @@ public class Main {
                         }
                     }
 
-                    // prompts user to for what book to checkout
+                    // prompts user for what book to checkout
                     System.out.print("\nEnter Book ID to check out (X to go back): ");
                     String checkoutChoice = scanner.nextLine();
 
@@ -136,7 +136,7 @@ public class Main {
 
                     break;
 
-                // Shows checkedout books
+                // Shows checked out books
                 case 2:
 
                     System.out.println("\n=== CHECKED OUT BOOKS ===");
