@@ -2,6 +2,7 @@ package org.example;
 
 public class Product {
 
+    // Product properties
     private String sku;
     private String productName;
     private double price;
