@@ -65,14 +65,14 @@ public class TransactionFileManager {
     }
 
     // Save a transaction to the file
-    public void saveTransaction(Transaction transaction) {
+    public boolean saveTransaction(Transaction transaction) {
 
         try {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter(fileName, true)
             );
 
-            // Format the transaction for our CSV (Locale.US verifies format for US conversion)
+            // Format the transaction for CSV
             String line = String.format(
                     Locale.US,
                     "%s|%s|%s|%s|%.2f",
@@ -87,8 +87,12 @@ public class TransactionFileManager {
             writer.newLine();
             writer.close();
 
+            return true;
+
         } catch (IOException e) {
             System.out.println("Error saving transaction: " + e.getMessage());
+            return false;
         }
     }
+
 }
