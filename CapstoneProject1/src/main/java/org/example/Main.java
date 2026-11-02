@@ -1,6 +1,7 @@
 
 package org.example;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDate;
@@ -99,7 +100,9 @@ public class Main {
 
         // Record the current date and time
         String date = LocalDate.now().toString();
-        String time = LocalTime.now().withNano(0).toString();
+        String time = LocalTime.now().format(
+                DateTimeFormatter.ofPattern("HH:mm:ss")
+        );
 
         if (!deposit) {
             amount = -amount;
