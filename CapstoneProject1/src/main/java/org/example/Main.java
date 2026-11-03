@@ -3,6 +3,8 @@ package org.example;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,7 +22,7 @@ public class Main {
 
         boolean running = true;
 
-        // Keep the application running
+        // Loops application to keep running
         while (running) {
 
             System.out.println("\n====================================");
@@ -112,7 +114,6 @@ public class Main {
                 date, time, description, vendor, amount
         );
 
-
         // Save the transaction before adding it to the ledger
         if (fileManager.saveTransaction(transaction)) {
 
@@ -122,7 +123,6 @@ public class Main {
         } else {
             System.out.println("Transaction could not be saved.");
         }
-
     }
 
     // Display the ledger menu
@@ -160,7 +160,7 @@ public class Main {
                     break;
 
                 case "R":
-                    System.out.println("Reports Not Available");
+                    showReports(scanner, ledger);
                     break;
 
                 case "H":
@@ -169,6 +169,89 @@ public class Main {
 
                 default:
                     System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    // Display the reports menu
+    public static void showReports(Scanner scanner, Ledger ledger) {
+
+        boolean viewingReports = true;
+
+        while (viewingReports) {
+
+            System.out.println("\n========== REPORTS ==========");
+            System.out.println("1) Month To Date");
+            System.out.println("2) Previous Month");
+            System.out.println("3) Year To Date");
+            System.out.println("4) Previous Year");
+            System.out.println("5) Search by Vendor");
+            System.out.println("6) Custom Search");
+            System.out.println("0) Back");
+            System.out.print("Enter your choice: ");
+
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+
+                case "1":
+                    showMonthToDate(ledger);
+                    break;
+
+                case "2":
+                    System.out.println("\n--- PREVIOUS MONTH ---");
+                    break;
+
+                case "3":
+                    System.out.println("\n--- YEAR TO DATE ---");
+                    break;
+
+                case "4":
+                    System.out.println("\n--- PREVIOUS YEAR ---");
+                    break;
+
+                case "5":
+                    System.out.println("\n--- SEARCH BY VENDOR ---");
+                    break;
+
+                case "6":
+                    System.out.println("\n--- CUSTOM SEARCH ---");
+                    break;
+
+                case "0":
+                    viewingReports = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+    // Display transactions from the current month
+    public static void showMonthToDate(Ledger ledger) {
+
+        System.out.println("\n--- MONTH TO DATE ---");
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+
+        ArrayList<Transaction> sortedTransactions =
+                new ArrayList<>(ledger.getTransactions());
+
+        // Sort transactions from newest to oldest
+        Collections.sort(sortedTransactions,
+                Comparator.comparing(Transaction::getDate)
+                        .thenComparing(Transaction::getTime)
+                        .reversed());
+
+        for (Transaction transaction : sortedTransactions) {
+
+            LocalDate transactionDate = LocalDate.parse(transaction.getDate());
+
+            if (!transactionDate.isBefore(startOfMonth)
+                    && !transactionDate.isAfter(today)) {
+
+                ledger.displayTransaction(transaction);
             }
         }
     }

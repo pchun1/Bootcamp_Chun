@@ -1,0 +1,23 @@
+[1mdiff --git a/CapstoneProject1/src/main/java/org/example/Main.java b/CapstoneProject1/src/main/java/org/example/Main.java[m
+[1mindex 07186cd..4c4cebe 100644[m
+[1m--- a/CapstoneProject1/src/main/java/org/example/Main.java[m
+[1m+++ b/CapstoneProject1/src/main/java/org/example/Main.java[m
+[36m@@ -1,6 +1,7 @@[m
+ [m
+ package org.example;[m
+ [m
+[32m+[m[32mimport java.time.format.DateTimeFormatter;[m
+ import java.util.ArrayList;[m
+ import java.util.Scanner;[m
+ import java.time.LocalDate;[m
+[36m@@ -99,7 +100,9 @@[m [mpublic class Main {[m
+ [m
+         // Record the current date and time[m
+         String date = LocalDate.now().toString();[m
+[31m-        String time = LocalTime.now().withNano(0).toString();[m
+[32m+[m[32m        String time = LocalTime.now().format([m
+[32m+[m[32m                DateTimeFormatter.ofPattern("HH:mm:ss")[m
+[32m+[m[32m        );[m
+ [m
+         if (!deposit) {[m
+             amount = -amount;[m
