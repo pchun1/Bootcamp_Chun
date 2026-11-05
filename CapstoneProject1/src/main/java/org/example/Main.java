@@ -72,18 +72,28 @@ public class Main {
 
         System.out.println(deposit ? "\n--- ADD DEPOSIT ---" : "\n--- MAKE PAYMENT ---");
 
-        System.out.print("Description: ");
-        String description = scanner.nextLine();
+        String description = getInput(scanner, "Description: ");
+        if (description == null) {
+            System.out.println("Transaction cancelled.");
+            return;
+        }
 
-        System.out.print("Vendor: ");
-        String vendor = scanner.nextLine();
+        String vendor = getInput(scanner, "Vendor: ");
+        if (vendor == null) {
+            System.out.println("Transaction cancelled.");
+            return;
+        }
 
         double amount;
 
         // Check that the amount is a valid number
         try {
-            System.out.print("Amount: ");
-            String amountInput = scanner.nextLine();
+            String amountInput = getInput(scanner, "Amount: ");
+
+            if (amountInput == null) {
+                System.out.println("Transaction cancelled.");
+                return;
+            }
 
             // Remove the dollar sign if entered
             amountInput = amountInput.replace("$", "").trim();
@@ -215,7 +225,7 @@ public class Main {
                     break;
 
                 case "6":
-                    System.out.println("\n--- CUSTOM SEARCH ---");
+                    showCustomSearch(scanner, ledger);
                     break;
 
                 case "0":
@@ -338,8 +348,12 @@ public class Main {
     public static void showSearchByVendor(Scanner scanner, Ledger ledger) {
         System.out.println("\n--- SEARCH BY VENDOR ---");
 
-        System.out.print("Enter vendor name: ");
-        String search = scanner.nextLine().trim();
+        String search = getInput(scanner, "Enter vendor name: ");
+
+        if (search == null) {
+            System.out.println("Search cancelled.");
+            return;
+        }
 
         if (search.isEmpty()) {
             System.out.println("Vendor name cannot be empty.");
@@ -369,5 +383,151 @@ public class Main {
         if (!found) {
             System.out.println("No matching transactions found.");
         }
+    }
+    // Search transactions using multiple filters (custom search)
+    public static void showCustomSearch(Scanner scanner, Ledger ledger) {
+        System.out.println("\n--- CUSTOM SEARCH ---");
+        System.out.println("Leave a field blank to skip that filter.");
+
+        try {
+            String startInput = getInput(scanner, "Start Date (YYYY-MM-DD): ");
+            if (startInput == null) {
+                System.out.println("Search cancelled.");
+                return;
+            }
+
+            String endInput = getInput(scanner, "End Date (YYYY-MM-DD): ");
+            if (endInput == null) {
+                System.out.println("Search cancelled.");
+                return;
+            }
+
+            LocalDate startDate = startInput.isEmpty()
+                    ? null : LocalDate.parse(startInput);
+
+            LocalDate endDate = endInput.isEmpty()
+                    ? null : LocalDate.parse(endInput);
+
+            if (startDate != null && endDate != null
+                    && startDate.isAfter(endDate)) {
+                System.out.println("Start date cannot be after end date.");
+                return;
+            }
+
+            // Get search filters
+            String description = getInput(scanner, "Description: ");
+            if (description == null) {
+                System.out.println("Search cancelled.");
+                return;
+            }
+            description = description.toLowerCase();
+
+            String vendor = getInput(scanner, "Vendor: ");
+            if (vendor == null) {
+                System.out.println("Search cancelled.");
+                return;
+            }
+            vendor = vendor.toLowerCase();
+
+            // Get amount range
+            String minInput = getInput(scanner, "Minimum Amount: ");
+            if (minInput == null) {
+                System.out.println("Search cancelled.");
+                return;
+            }
+            minInput = minInput.replace("$", "");
+
+            String maxInput = getInput(scanner, "Maximum Amount: ");
+            if (maxInput == null) {
+                System.out.println("Search cancelled.");
+                return;
+            }
+            maxInput = maxInput.replace("$", "");
+
+            Double minAmount = minInput.isEmpty()
+                    ? null : Double.parseDouble(minInput);
+
+            Double maxAmount = maxInput.isEmpty()
+                    ? null : Double.parseDouble(maxInput);
+
+            if ((minAmount != null && !Double.isFinite(minAmount))
+                    || (maxAmount != null && !Double.isFinite(maxAmount))) {
+                System.out.println("Amounts must be valid numbers.");
+                return;
+            }
+
+            if (minAmount != null && maxAmount != null
+                    && minAmount > maxAmount) {
+                System.out.println("Minimum amount cannot exceed maximum amount.");
+                return;
+            }
+
+            ArrayList<Transaction> sortedTransactions =
+                    new ArrayList<>(ledger.getTransactions());
+
+            Collections.sort(sortedTransactions,
+                    Comparator.comparing(Transaction::getDate)
+                            .thenComparing(Transaction::getTime)
+                            .reversed());
+
+            boolean found = false;
+
+            for (Transaction transaction : sortedTransactions) {
+                LocalDate transactionDate =
+                        LocalDate.parse(transaction.getDate());
+
+                if (startDate != null && transactionDate.isBefore(startDate)) {
+                    continue;
+                }
+
+                if (endDate != null && transactionDate.isAfter(endDate)) {
+                    continue;
+                }
+
+                if (!transaction.getDescription().toLowerCase()
+                        .contains(description)) {
+                    continue;
+                }
+
+                if (!transaction.getVendor().toLowerCase()
+                        .contains(vendor)) {
+                    continue;
+                }
+
+                if (minAmount != null && transaction.getAmount() < minAmount) {
+                    continue;
+                }
+
+                if (maxAmount != null && transaction.getAmount() > maxAmount) {
+                    continue;
+                }
+
+                ledger.displayTransaction(transaction);
+                found = true;
+            }
+
+            if (!found) {
+                System.out.println("No matching transactions found.");
+            }
+
+        } catch (java.time.format.DateTimeParseException e) {
+            System.out.println("Invalid date. Use YYYY-MM-DD.");
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid amount. Please enter a number.");
+        }
+    }
+    // Custom method for user input exit method
+    public static String getInput(Scanner scanner, String prompt) {
+        System.out.println("(Enter X to cancel and return to the previous menu)");
+        System.out.print(prompt);
+
+        String input = scanner.nextLine().trim();
+
+        if (input.equalsIgnoreCase("X")) {
+            return null;
+        }
+
+        return input;
     }
 }
