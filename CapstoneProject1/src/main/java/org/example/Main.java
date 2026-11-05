@@ -199,19 +199,19 @@ public class Main {
                     break;
 
                 case "2":
-                    System.out.println("\n--- PREVIOUS MONTH ---");
+                    showPreviousMonth(ledger);
                     break;
 
                 case "3":
-                    System.out.println("\n--- YEAR TO DATE ---");
+                    showYearToDate(ledger);
                     break;
 
                 case "4":
-                    System.out.println("\n--- PREVIOUS YEAR ---");
+                    showPreviousYear(ledger);
                     break;
 
                 case "5":
-                    System.out.println("\n--- SEARCH BY VENDOR ---");
+                    showSearchByVendor(scanner, ledger);
                     break;
 
                 case "6":
@@ -253,6 +253,121 @@ public class Main {
 
                 ledger.displayTransaction(transaction);
             }
+        }
+    }
+    // Display transactions from the previous month
+    public static void showPreviousMonth(Ledger ledger) {
+        System.out.println("\n--- PREVIOUS MONTH ---");
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfPreviousMonth = today.minusMonths(1).withDayOfMonth(1);
+        LocalDate endOfPreviousMonth = today.withDayOfMonth(1).minusDays(1);
+
+        ArrayList<Transaction> sortedTransactions =
+                new ArrayList<>(ledger.getTransactions());
+
+        // Sort transactions from newest to oldest
+        Collections.sort(sortedTransactions,
+                Comparator.comparing(Transaction::getDate)
+                        .thenComparing(Transaction::getTime)
+                        .reversed());
+
+        for (Transaction transaction : sortedTransactions) {
+            LocalDate transactionDate = LocalDate.parse(transaction.getDate());
+
+            if (!transactionDate.isBefore(startOfPreviousMonth)
+                    && !transactionDate.isAfter(endOfPreviousMonth)) {
+                ledger.displayTransaction(transaction);
+            }
+        }
+    }
+    // Display transactions from the beginning of the current year
+    public static void showYearToDate(Ledger ledger) {
+        System.out.println("\n--- YEAR TO DATE ---");
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfYear = today.withDayOfYear(1);
+
+        ArrayList<Transaction> sortedTransactions =
+                new ArrayList<>(ledger.getTransactions());
+
+        // Sort transactions from newest to oldest
+        Collections.sort(sortedTransactions,
+                Comparator.comparing(Transaction::getDate)
+                        .thenComparing(Transaction::getTime)
+                        .reversed());
+
+        for (Transaction transaction : sortedTransactions) {
+            LocalDate transactionDate = LocalDate.parse(transaction.getDate());
+
+            if (!transactionDate.isBefore(startOfYear)
+                    && !transactionDate.isAfter(today)) {
+                ledger.displayTransaction(transaction);
+            }
+        }
+    }
+    // Display transactions from the previous year
+    public static void showPreviousYear(Ledger ledger) {
+        System.out.println("\n--- PREVIOUS YEAR ---");
+
+        LocalDate today = LocalDate.now();
+        LocalDate previousYear = today.minusYears(1);
+
+        LocalDate startOfPreviousYear = previousYear.withDayOfYear(1);
+        LocalDate endOfPreviousYear = previousYear.withMonth(12).withDayOfMonth(31);
+
+        ArrayList<Transaction> sortedTransactions =
+                new ArrayList<>(ledger.getTransactions());
+
+        // Sort transactions from newest to oldest
+        Collections.sort(sortedTransactions,
+                Comparator.comparing(Transaction::getDate)
+                        .thenComparing(Transaction::getTime)
+                        .reversed());
+
+        for (Transaction transaction : sortedTransactions) {
+            LocalDate transactionDate = LocalDate.parse(transaction.getDate());
+
+            if (!transactionDate.isBefore(startOfPreviousYear)
+                    && !transactionDate.isAfter(endOfPreviousYear)) {
+                ledger.displayTransaction(transaction);
+            }
+        }
+    }
+    // Search transactions by vendor name
+    public static void showSearchByVendor(Scanner scanner, Ledger ledger) {
+        System.out.println("\n--- SEARCH BY VENDOR ---");
+
+        System.out.print("Enter vendor name: ");
+        String search = scanner.nextLine().trim();
+
+        if (search.isEmpty()) {
+            System.out.println("Vendor name cannot be empty.");
+            return;
+        }
+
+        ArrayList<Transaction> sortedTransactions =
+                new ArrayList<>(ledger.getTransactions());
+
+        // Sort transactions from newest to oldest
+        Collections.sort(sortedTransactions,
+                Comparator.comparing(Transaction::getDate)
+                        .thenComparing(Transaction::getTime)
+                        .reversed());
+
+        boolean found = false;
+
+        for (Transaction transaction : sortedTransactions) {
+            if (transaction.getVendor().toLowerCase()
+                    .contains(search.toLowerCase())) {
+
+                ledger.displayTransaction(transaction);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No matching transactions found.");
         }
     }
 }
