@@ -30,6 +30,7 @@ public class Ledger {
                         .thenComparing(Transaction::getTime)
                         .reversed());
 
+        displayTableHeader();
         for (Transaction transaction : sortedTransactions) {
             displayTransaction(transaction);
         }
@@ -45,6 +46,7 @@ public class Ledger {
                         .thenComparing(Transaction::getTime)
                         .reversed());
 
+        displayTableHeader();
         for (Transaction transaction : sortedTransactions) {
 
             if (deposits && transaction.getAmount() > 0) {
@@ -58,16 +60,34 @@ public class Ledger {
     // Display a single transaction
     public void displayTransaction(Transaction transaction) {
 
+        double amount = transaction.getAmount();
+
+
+        String color = amount >= 0 ? Main.GREEN : Main.RED;
+
         System.out.printf(
-                "%-12s | %-10s | %-25s | %-20s | $%10.2f%n",
+                "  %-12s %-10s %-25.25s %-20.20s %s$%10.2f%s%n",
                 transaction.getDate(),
                 transaction.getTime(),
                 transaction.getDescription(),
                 transaction.getVendor(),
-                transaction.getAmount()
+                color,
+                amount,
+                Main.RESET
         );
     }
 
+    public void displayTableHeader() {
+
+        System.out.printf(
+                Main.MUTED + "  %-12s %-10s %-25s %-20s %11s%n" + Main.RESET,
+                "DATE", "TIME", "DESCRIPTION", "VENDOR", "AMOUNT"
+        );
+
+        System.out.println(
+                Main.MUTED + "  " + "-".repeat(84) + Main.RESET
+        );
+    }
     // Get all transactions for reports
     public ArrayList<Transaction> getTransactions() {
         return transactions;
