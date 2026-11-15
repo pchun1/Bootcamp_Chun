@@ -16,7 +16,6 @@ public class Main {
         // Keep the application running
         while (running) {
 
-            // Display home menu
             // Display store welcome message
             System.out.println("\n================================");
             System.out.println("     WELCOME TO PAUL'S PANTRY");
@@ -33,7 +32,7 @@ public class Main {
 
                 case "1": {
 
-                    // Keep the product menu running until the user goes back
+                    // Keep product menu running until user goes back
                     boolean viewingProducts = true;
 
                     while (viewingProducts) {
@@ -69,20 +68,22 @@ public class Main {
 
                                     // Prompt user for minimum price
                                     System.out.print("Enter minimum price: ");
-                                    double minPrice = Double.parseDouble(scanner.nextLine());
+                                    double minPrice = Double.parseDouble(
+                                            scanner.nextLine());
 
                                     // Prompt user for maximum price
                                     System.out.print("Enter maximum price: ");
-                                    double maxPrice = Double.parseDouble(scanner.nextLine());
+                                    double maxPrice = Double.parseDouble(
+                                            scanner.nextLine());
 
                                     // Display products within selected price range
                                     store.searchByPrice(minPrice, maxPrice);
 
                                 } catch (NumberFormatException e) {
 
-                                    // Display error if user enters an invalid number
-                                    System.out.println("Invalid input! Please enter a valid number.");
-
+                                    // Handle invalid number inputs
+                                    System.out.println(
+                                            "Invalid input! Please enter a valid number.");
                                 }
                                 break;
 
@@ -123,7 +124,7 @@ public class Main {
                                         break;
                                 }
 
-                                // Display products if a valid department was selected
+                                // Display products if department was selected
                                 if (!department.isEmpty()) {
                                     store.searchByDepartment(department);
                                 }
@@ -139,7 +140,7 @@ public class Main {
                                 break;
 
                             case "5":
-                                // Return to the home screen
+                                // Return to home screen
                                 viewingProducts = false;
                                 break;
 
@@ -154,7 +155,7 @@ public class Main {
 
                 case "2": {
 
-                    // Keep the cart menu running until the user goes back
+                    // Keep cart menu running until user goes back
                     boolean viewingCart = true;
 
                     while (viewingCart) {
@@ -176,11 +177,51 @@ public class Main {
                         switch (cartChoice) {
 
                             case "1":
-                                // Checkout functionality will be added later
-                                System.out.println("Checkout coming soon!");
+                                // Check if cart is empty before checkout
+                                if (store.isCartEmpty()) {
+                                    System.out.println("Your cart is empty.");
+                                    break;
+                                }
+
+                                // Display checkout total
+                                System.out.println("\n===== PAUL'S PANTRY | CHECKOUT =====");
+                                System.out.printf(
+                                        "Total Amount Due: $%.2f%n",
+                                        store.getCartTotal()
+                                );
+
+                                // Handle invalid cash payments
+                                try {
+
+                                    // Prompt user for cash payment
+                                    System.out.print("Enter cash payment: ");
+                                    double amountPaid = Double.parseDouble(
+                                            scanner.nextLine());
+
+                                    // Complete checkout and save receipt
+                                    boolean checkoutComplete =
+                                            store.checkout(amountPaid);
+
+                                    // Return home after successful checkout
+                                    if (checkoutComplete) {
+                                        viewingCart = false;
+                                    }
+
+                                } catch (NumberFormatException e) {
+
+                                    // Handle invalid payment inputs
+                                    System.out.println(
+                                            "Invalid payment! Please enter a valid number.");
+                                }
                                 break;
 
                             case "2":
+                                // Check if cart is empty before removing
+                                if (store.isCartEmpty()) {
+                                    System.out.println("Your cart is empty.");
+                                    break;
+                                }
+
                                 // Display cart before removing a product
                                 store.displayCart();
 
@@ -193,7 +234,7 @@ public class Main {
                                 break;
 
                             case "3":
-                                // Return to the home screen
+                                // Return to home screen
                                 viewingCart = false;
                                 break;
 

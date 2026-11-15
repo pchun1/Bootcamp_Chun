@@ -1,0 +1,17 @@
+
+===== PAUL'S PANTRY | SALES RECEIPT =====
+어서 오세요!
+
+Order Date: 2026-11-10 15:28:40
+
+SKU   | Product                      | Qty |  Subtotal
+-------------------------------------------------------
+K010  | Kimchi Pack                  |   1 | $    4.49
+K001  | Shin Ramyun Cup              |   1 | $    2.49
+
+Sales Total:  $6.98
+Amount Paid:  $8.00
+Change Given: $1.02
+
+Thank you for shopping at Paul's Pantry!
+감사합니다!

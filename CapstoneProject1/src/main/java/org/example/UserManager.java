@@ -12,7 +12,7 @@ public class UserManager {
         String employeeHash = BCrypt.hashpw("Employee123!", BCrypt.gensalt(12));
         String managerHash = BCrypt.hashpw("Manager123!", BCrypt.gensalt(12));
 
-        employee = new User("pchunemployee", employeeHash, "EMPLOYEE");
+        employee = new User("jonathanhop", employeeHash, "EMPLOYEE");
         manager = new User("pchunmanager", managerHash, "MANAGER");
     }
 
